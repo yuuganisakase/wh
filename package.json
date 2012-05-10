@@ -1,0 +1,32 @@
+{
+  "name": "jquery.wwwwh",
+  "title": "wwwwh",
+  "description": "The best jQuery plugin ever.",
+  "version": "0.1.0",
+  "homepage": "https://github.com/yuuganisakase/jquery.wwwwh",
+  "author": {
+    "name": "oka",
+    "email": "yuuganisakase@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/yuuganisakase/jquery.wwwwh.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yuuganisakase/jquery.wwwwh/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/yuuganisakase/jquery.wwwwh/blob/master/LICENSE-MIT"
+    },
+    {
+      "type": "GPL",
+      "url": "https://github.com/yuuganisakase/jquery.wwwwh/blob/master/LICENSE-GPL"
+    }
+  ],
+  "dependencies": {
+    "jquery": "~1.5"
+  },
+  "keywords": []
+}

@@ -1,0 +1,23 @@
+body{
+	margin:0;
+	background-color: #1d1d1d;
+	overflow: hidden;
+}
+.screenname{
+	font-family:HelveticaNeue,”Helvetica Neue”,Helvetica,Arial,sans-serif;
+	font-weight:normal;
+	font-size:16px;
+}
+.username{
+	font-family:HiraKakuProN-W3,HiraKakuPro-W3,”ヒラギノ角ゴ ProN W3”,”ヒラギノ角ゴ Pro W3”,“メイリオ”,Meiryo,”ＭＳ ゴシック”,sans-serif;
+	font-weight:normal;
+	font-size:12px;
+}
+.timelabel{
+	font-family:HelveticaNeue,”Helvetica Neue”,Helvetica,Arial,sans-serif;
+	font-size:10px;
+	font-weight:normal;
+}
+.timelabel > .number{
+	font-size:14px;
+}

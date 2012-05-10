@@ -1,0 +1,76 @@
+<html>
+	<head>
+		<title>
+			taitoru
+		</title>
+		<link rel="stylesheet" type="text/css" href="css/main.css">
+		<!--[if lt IE 9]>
+<script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+<![endif]-->
+		<script type="text/javascript" src="js/lib/jquery-1.7.2.min.js">
+				
+		</script>
+		<script type="text/javascript" src="js/lib/underscore-min.js">
+				
+		</script>
+		<script type="text/javascript" src="js/lib/backbone.js">
+				
+		</script>
+		<script type="text/javascript" src="js/lib/enchant.js">
+				
+		</script>
+		<!--<script type="text/javascript" src="js/util/backbone-localstorage.js"> -->
+				
+		</script>
+		<script type="text/javascript" src="js/lib/Tween.js"></script>
+
+		<script type="text/javascript" src="js/util/ViewFactory.js">
+				
+		</script>
+		<script type="text/javascript" src="js/model/nodeModel.js">
+				
+		</script>
+		<script type="text/javascript" src="js/model/nodeList.js">
+				
+		</script>
+		<script type="text/javascript" src="js/view/nodeView.js">
+				
+		</script>
+		<script type="text/javascript" src="js/view/headerView.js"></script>
+		<script type="text/javascript" src="js/util/loadCommand.js"></script>
+		<script type="text/javascript" src="js/util/DrawLinkCommand.js"></script>
+
+		<script type="text/javascript" src="js/util/ArrangeNodeCommand.js"></script>
+		<script type="text/javascript" src="js/util/GetGroupMembersCommand.js"></script>
+		<script type="text/javascript" src="js/util/FindNonFriendFromArrayCommand.js"></script>
+		<script type="text/javascript" src="js/util/FBproxy.js"></script>
+		<script type="text/javascript" src="js/app2.js">
+		</script>
+	</head>
+	<body>
+
+		<div>
+
+		</div>
+		<script>
+	(function(d) {
+
+
+		var js, id = 'facebook-jssdk',
+			ref = d.getElementsByTagName('script')[0];
+		if (d.getElementById(id)) {
+			return;
+		}
+		js = d.createElement('script');
+		js.id = id;
+		js.async = true;
+		js.src = "//connect.facebook.net/en_US/all.js";
+		ref.parentNode.insertBefore(js, ref);
+	}(document));
+	$(function() {
+		allInit();
+	})
+		</script>
+
+	</body>
+</html>
