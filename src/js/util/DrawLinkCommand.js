@@ -22,7 +22,6 @@ var DrawLinkCommand = function() {
 
 						if (cl) that.drawLine(n1, n2);
 
-
 					});
 				});
 			},
@@ -122,13 +121,13 @@ var DrawLinkCommand = function() {
 					}
 				});
 
-				if (f === false) {
-					_.each(bl, function(bo) {
-						if (bo == aid) {
-							f = true;
-						}
-					});
-				}
+				// if (f === false) {
+				// 	_.each(bl, function(bo) {
+				// 		if (bo == aid) {
+				// 			f = true;
+				// 		}
+				// 	});
+				// }
 
 				return f;
 			}
