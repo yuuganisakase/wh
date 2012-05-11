@@ -98,7 +98,7 @@ var allInit = function() {
                     h.init();
                     stageGroup.addChild(stageSprite);
 
-
+                    log(nodes);
                     var arrangeCommand = new ArrangeNodeCommand(nodes);
                     arrangeCommand.execute();
                     var me;

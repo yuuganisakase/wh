@@ -18,7 +18,7 @@ var LoadCommand = function() {
 						cache: false
 					}).done(function(data) {
 						log("node list json");
-						log(data);
+						//log(data);
 						that.completeSignal.trigger("complete", data);
 					});
 					return;

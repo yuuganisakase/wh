@@ -284,7 +284,9 @@ var NodeView = Backbone.View.extend({
         return pos;
     },
     getLink: function() {
-        return this.model.get("link");
+        var n = this.model.get("link");
+        if(_.isUndefined(n)) n = [];
+        return n;
     },
     setPosition: function(_x, _y) {
         var xx = Math.floor(_x);
