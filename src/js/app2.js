@@ -14,13 +14,18 @@ var allInit = function() {
 
         var models = [];
         var nodes = [];
-
+                var images = ['assets/help.png','assets/help_hover.png',
+                            'assets/logo.png','assets/logo_hover.png',
+                            'assets/logout.png','assets/logout_hover.png',
+                            "assets/clock.png"];
         window.fbAsyncInit = function() {
             var lc = new LoadCommand();
             lc.load();
             lc.completeSignal.on("complete", function(obj) {
                 log("load complete in app");
                 log(obj);
+
+                //obj = obj.splice(0,4);
 
                 (function(data) {
 
@@ -33,13 +38,41 @@ var allInit = function() {
                         };
 
                     var js = JSON.parse(data);
+                    var ran = Math.random();
+                    // if(ran > 0.8){
+
+                    // }else if(ran > 0.6){
+                    //     js.list.splice(6,1);
+                    // }else if(ran > 0.4){
+                    //     js.list.splice(7,1);
+                    // }else if(ran > 0.2){
+                    //     js.list.splice(12,1);
+                    // }
+                    var randomChoose = function(ind) {
+                      if(Math.random() > 0.7){
+                        js.list.splice(ind,1);
+                    }                      
+                    }
+                    randomChoose(1);
+                    randomChoose(6);
+                    randomChoose(7);
+                    randomChoose(8);
+                    randomChoose(12);
+                    
+                    //js.list = _.shuffle(js.list);
+                    //js.list = js.list.slice(0, 0 + Math.floor(Math.random() * (js.list.length - 0)));
+                    log("sliced");
+                    log(js.list);
                     _.each(js.list, function(o) {
+                        images.push(o.imageUrl);
+                        
                         createM(o);
                     });
                 })(obj);
 
                 log("models");
                 log(models);
+                log(images);
                 start();
             });
         };
@@ -56,10 +89,7 @@ var allInit = function() {
 
                 var game = new Game(CanvasSizeW, CanvasSizeH);
                 game.fps = 20;
-                var images = ['assets/help.png','assets/help_hover.png',
-                            'assets/logo.png','assets/logo_hover.png',
-                            'assets/logout.png','assets/logout_hover.png',
-                            "assets/clock.png"];
+
                 game.preload(images);
                 game.scale = 1;
 
@@ -68,7 +98,6 @@ var allInit = function() {
                     var scene = new Scene();
                     game.replaceScene(scene);
                     
-
                     var stageGroup = new Group();
                     scene.addChild(stageGroup);
                     var stageSprite = new Sprite(CanvasSizeW, CanvasSizeH);
@@ -108,8 +137,6 @@ var allInit = function() {
                             me = n;
                         }
                     });
-
-
 
 
                     var dl = new DrawLinkCommand();

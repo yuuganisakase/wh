@@ -15,7 +15,7 @@ var ArrangeNodeCommand = function(_nodes) {
 				return _.intersection(a, b).length;
 			};
 		var getFromId = function(ar, id) {
-				var r = {};
+				var r = 0;
 				_.each(ar, function(n) {
 					if (n.getId() == id) {
 						r = n;
@@ -39,8 +39,7 @@ var ArrangeNodeCommand = function(_nodes) {
 						return tar;
 					}
 				}
-				throw new Error("get from type back");
-
+				return 0;
 			};
 		var isIncluded = function(ar, id) {
 				var included = _.find(ar, function(n) {
@@ -132,15 +131,15 @@ var ArrangeNodeCommand = function(_nodes) {
 				});
 				ar = that.sortBySimilarity(ar, 2);
 				var oneAngle = pi * 2 / num;
-				var currentAngle = 0;
+				var currentAngle = Math.random()*0.3;
 				var dd;
 
 				_.each(ar, function(n) {
 
 					if (currentAngle > pi / 4 && currentAngle < pi * 3 / 4 || currentAngle > pi * 5 / 4 && currentAngle < pi * 7 / 4) {
-						dd = 280;
+						dd = 280 + Math.random() * 30;
 					} else {
-						dd = 400;
+						dd = 370 + Math.random() * 70;
 					}
 					that.placeNodeFromCenter(n, dd, currentAngle);
 					n.angle = currentAngle;
@@ -160,13 +159,27 @@ var ArrangeNodeCommand = function(_nodes) {
 				var non;
 				if (ar.length > 0) {
 
-					var lastid = getFromTypeBack(top.simArray, type).id;
-					//top.simArray[top.simArray.length - 1].id;
-					log(lastid);
-					non = getFromId(ar, lastid);
-					log(non);
-					there.push(non);
-					ar = _.without(ar, non);
+					//while (true) {
+						var obj = getFromTypeBack(top.simArray, type);
+						var lastid = obj.id;
+						//top.simArray[top.simArray.length - 1].id;
+						log(lastid);
+						non = getFromId(ar, lastid);
+						if(non !== 0){
+						//if(true){
+							there.push(non);
+							ar = _.without(ar, non);
+							//break;
+						}else{
+							//top.simArray = _.without(top.simArray, obj);
+							log(obj);
+							log(top.simArray);
+							there.push(ar[0]);
+							ar = _.without(ar,ar[0]);
+						}
+						log(non);
+					//}
+
 				}
 				log(ar);
 				log(here);
@@ -186,9 +199,14 @@ var ArrangeNodeCommand = function(_nodes) {
 							//log(simar[i]);
 							if (isIncluded(ar, simar[i].id)) {
 								top = getFromId(ar, simar[i].id);
-								i = simar.length;
-								here.push(top);
-								ar = _.without(ar, top);
+								if (top !== 0) {
+								//if(true){
+									i = simar.length;
+									here.push(top);
+									ar = _.without(ar, top);
+
+								}
+
 							}
 						}
 
@@ -199,9 +217,14 @@ var ArrangeNodeCommand = function(_nodes) {
 
 								if (isIncluded(ar, simar[i].id)) {
 									non = getFromId(ar, simar[i].id);
-									i = simar.length;
-									ar = _.without(ar, non);
-									there.push(non);
+									//if (non !== 0) {
+									if(true){
+
+										i = simar.length;
+										ar = _.without(ar, non);
+										there.push(non);
+									}
+
 								}
 							}
 						}
@@ -231,7 +254,7 @@ var ArrangeNodeCommand = function(_nodes) {
 				});
 
 				var oneAngle = pi * 2 / num;
-				var currentAngle = 0;
+				var currentAngle = Math.random()*0.3;
 
 				var anglePossibility = [0];
 				for (var i = 0; i < num; i++) {
@@ -269,7 +292,7 @@ var ArrangeNodeCommand = function(_nodes) {
 					log("outer line : 0 each");
 					log(anglePossibility);
 					if (n.outerLineNum === 0) {
-						
+
 						currentAngle = anglePossibility[0];
 
 						anglePossibility = _.rest(anglePossibility);
@@ -298,10 +321,25 @@ var ArrangeNodeCommand = function(_nodes) {
 					//log("set outer line num");
 					//log( getFromId(nodes, l) );
 					var out = getFromId(nodes, l);
-					if (out.getType() == 2) {
-						num += 1;
-						angles += out.angle;
+					log("set outer line num : ");
+					//log(out);
+					//log(l);
+					if (out !== 0) {
+					//if(true){
+						if (out.getType() == 2) {
+							num += 1;
+							angles += out.angle;
+						}
 					}
+
+					var idar = [];
+					_.each(nodes, function(n) {
+						idar.push(n.getId());
+					});
+					log("node id ar");
+					log(idar);
+
+
 				});
 				if (num > 0) {
 					angles = angles / num;
@@ -319,6 +357,8 @@ var ArrangeNodeCommand = function(_nodes) {
 				}
 			},
 			placeNodeFromCenter: function(n, dist, angle) {
+				log("place node from position");
+				log(n);
 
 				var xx = centerX + dist * Math.cos(angle);
 				var yy = centerY - dist * Math.sin(angle);

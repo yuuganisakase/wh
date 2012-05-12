@@ -13,14 +13,30 @@ var DrawLinkCommand = function() {
 				var that = this;
 				stage = _stage;
 				log("draw line execute");
-
+				var already = [];
 				var nodes = _nodes;
 				_.each(nodes, function(n1) {
 					_.each(nodes, function(n2) {
 						var cl = that.checkLink(n1, n2);
 						log(cl);
 
-						if (cl) that.drawLine(n1, n2);
+
+						if (cl){
+							var n1id = n1.getId();
+							var n2id = n2.getId();
+							var iden = false;
+							_.each(already, function(al) {
+								if( (al.a == n1id || al.b == n1id) && (al.a == n2id || al.b == n2id)){
+									iden = true;
+								}
+							});
+							if(iden === false){
+								that.drawLine(n1, n2);
+								already.push({a:n1.getId(), b:n2.getId()});
+							}
+							
+							
+						}
 
 					});
 				});
@@ -90,7 +106,8 @@ var DrawLinkCommand = function() {
 					var dx = 2 * Math.cos(angle);
 					var dy = 2 * Math.sin(angle);
 					var dd = calcDist(mmm, mmm2);
-					var num = dd / 4;
+					var num = Math.floor(dd / 4);
+
 					var next = {
 						x: mmm.x + dx,
 						y: mmm.y + dy

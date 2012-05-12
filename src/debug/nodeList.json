@@ -37,7 +37,7 @@
 		"screenName": "Kayoko Yanagihara",
 		"userName": "Kayoko Yanagihara",
 		"type":2,
-		"link":["100000598795044,827208134"]
+		"link":["100000598795044,827208134", "100000187269059"]
 	},
 	{
 		"imageUrl": "https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/370570_100000598795044_10771272_q.jpg",
@@ -77,7 +77,7 @@
 		"screenName": "tora.hamada",
 		"userName": "Tora Hamada",
 		"type":1,
-		"link":["100003284180017","544336988" ]
+		"link":["100003284180017","544336988", "100000187269059", "100000184186990" ]
 	},
 	{
 		"imageUrl": "https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/369514_100000269181751_879811938_q.jpg",
@@ -86,6 +86,22 @@
 		"userId": "100000269181751",
 		"type":1,
 		"link":["819399766","100001916831839","100000598795044"]
+	},
+	{
+		"userId": "100000187269059",
+		"imageUrl": "https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/573213_100000187269059_1594074079_q.jpg",
+		"screenName": "msktki",
+		"userName": "Masaki Carlos Takei",
+		"type":2,
+		"link":["100002477958750", "100000184186990","1560889284"]
+	},
+	{
+		"userId": "100000184186990",
+		"imageUrl": "https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/275951_100000184186990_1914050_q.jpg",
+		"screenName": "koichi.katsumata",
+		"userName": "Koichi Katsumata",
+		"type":2,
+		"link":["100002477958750", "100000187269059"]
 	}
 ]
 }

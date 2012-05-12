@@ -65,27 +65,44 @@ var NodeView = Backbone.View.extend({
     },
     init: function() {
         var that = this;
-        //this.model.bind("change", this.render, this);
         this.createPop();
 
         var path = that.model.get("imageUrl");
         that.model.on("change:popup", that.onPopupChange ,this);
         that.render();
 
-        this.game.load(path, function() {
+        //this.game.load(path, function() {
             var path = that.model.get("imageUrl");
 
             var image = that.game.assets[path];
             var context = that.stage.context;
+
+            var timeObj = this.model.get("time");
+            var time = (+timeObj.hour) * 60 + (+timeObj.min);
+            var alpha = (250 - time) / 250;
+            if(time < 50){
+                alpha = 1;
+            }
+            context.globalAlpha = alpha;
             var size = that.model.get("size");
             var bw = that.model.get("borderWidth");
             context.strokeStyle = that.model.get("borderColor");
             context.fillStyle = that.model.get("borderColor");
-            context.fillRect(that.getPosition().x - bw,that.getPosition().y - bw,size+bw*2,size+bw*2);
+            context.beginPath();
+            var pos = that.getPosition();
+context.lineWidth = bw;
+  context.moveTo(pos.x - bw/2, pos.y - bw/2);
+  context.lineTo(pos.x + bw/2 + size, pos.y - bw/2);
+  context.lineTo(pos.x + bw/2 + size, pos.y + bw/2 + size);
+  context.lineTo(pos.x - bw/2, pos.y + bw/2 + size);
+  context.lineTo(pos.x - bw/2, pos.y - bw/2);
+  context.closePath();
+  context.stroke();
+           // context.fillRect(that.getPosition().x - bw,that.getPosition().y - bw,size+bw*2,size+bw*2);
             that.stage.draw(image, 0, 0, 50, 50, that.getPosition().x, that.getPosition().y, size, size);
-
+context.globalAlpha = 1;
             //that.render();
-        });
+       // });
 
     },
     createPop: function() {
@@ -185,20 +202,22 @@ var NodeView = Backbone.View.extend({
     getFourCenter:function() {
         var that = this;
         var size = that.model.get("size");
+        var bw = that.model.get("borderWidth");
+
         var a = {
             "x" : that.getPosition().x + size/2,
-            "y" : that.getPosition().y
+            "y" : that.getPosition().y - bw
         };
         var b = {
-            "x" : that.getPosition().x + size,
+            "x" : that.getPosition().x + size + bw,
             "y" : that.getPosition().y + size/2
         };
         var c = {
             "x" : that.getPosition().x + size/2,
-            "y" : that.getPosition().y + size
+            "y" : that.getPosition().y + size + bw
         };
         var d = {
-            "x" : that.getPosition().x,
+            "x" : that.getPosition().x - bw,
             "y" : that.getPosition().y + size/2
         };
         
@@ -210,7 +229,6 @@ var NodeView = Backbone.View.extend({
         var that = this;
         var kinds = that.getType();
         
-
         
         var size;
         var color;
