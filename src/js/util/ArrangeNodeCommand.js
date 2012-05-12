@@ -143,7 +143,7 @@ var ArrangeNodeCommand = function(_nodes) {
 					}
 					that.placeNodeFromCenter(n, dd, currentAngle);
 					n.angle = currentAngle;
-					currentAngle += oneAngle;
+					currentAngle += (oneAngle*0.9 + Math.random()*oneAngle*0.2);
 
 				});
 
@@ -304,7 +304,7 @@ var ArrangeNodeCommand = function(_nodes) {
 						}
 						that.placeNodeFromCenter(n, dd, currentAngle);
 						n.angle = currentAngle;
-						currentAngle += oneAngle;
+						currentAngle += (oneAngle*0.9 + oneAngle*Math.random()*0.2);
 						that.already.push(n);
 
 					}
