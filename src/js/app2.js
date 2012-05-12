@@ -89,7 +89,8 @@ var allInit = function() {
 
                 var game = new Game(CanvasSizeW, CanvasSizeH);
                 game.fps = 20;
-
+                var ls = new Scene();
+                game.loadingScene = ls;
                 game.preload(images);
                 game.scale = 1;
 
