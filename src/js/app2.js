@@ -94,7 +94,7 @@ var allInit = function() {
                 game.preload(images);
                 game.scale = 1;
 
-
+                
                 game.onload = function() {
                     var scene = new Scene();
                     game.replaceScene(scene);

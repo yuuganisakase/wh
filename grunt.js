@@ -14,8 +14,21 @@ module.exports = function(grunt) {
     },
     concat: {
       dist: {
-        src: ['<banner:meta.banner>', '<file_strip_banner:src/<%= pkg.name %>.js>'],
-        dest: 'dist/<%= pkg.name %>.js'
+        src: [
+        'src/js/util/ViewFactory.js',
+        'src/js/model/nodeModel.js',
+        'src/js/model/nodeList.js',
+        'src/js/view/nodeView.js',
+        'src/js/view/headerView.js',
+        'src/js/util/loadCommand.js',
+        'src/js/util/DrawLinkCommand.js',
+        'src/js/util/ArrangeNodeCommand.js',
+        'src/js/util/GetGroupMembersCommand.js',
+        'src/js/util/FindNonFriendFromArrayCommand.js',
+        'src/js/util/FBproxy.js',
+        'src/js/app2.js'
+        ],
+        dest: 'src/js/app.js'
       }
     },
     min: {
@@ -56,7 +69,7 @@ module.exports = function(grunt) {
   });
 
   // Default task.
-  grunt.registerTask('default', 'lint qunit concat min');
+  grunt.registerTask('default', 'qunit concat');
   grunt.registerTask('copy', 'copy copy copy', function() {
       var done = this.async();
       exec('cp -rfp ' + 'src/ ' + '/Library/WebServer/Documents/src/' , function(error, stdout, stderr){
