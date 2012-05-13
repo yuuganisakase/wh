@@ -8,8 +8,7 @@ var local = true;
 
 var store = {};
 var FBp = new FBproxy(store);
-log("=========local data =======");
-log(store.data);
+
 var allInit = function() {
 
         var models = [];

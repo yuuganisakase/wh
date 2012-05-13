@@ -69,7 +69,7 @@ module.exports = function(grunt) {
   });
 
   // Default task.
-  grunt.registerTask('default', 'qunit concat');
+  grunt.registerTask('default', 'concat qunit');
   grunt.registerTask('copy', 'copy copy copy', function() {
       var done = this.async();
       exec('cp -rfp ' + 'src/ ' + '/Library/WebServer/Documents/src/' , function(error, stdout, stderr){
