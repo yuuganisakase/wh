@@ -885,7 +885,8 @@ var ArrangeNodeCommand = function(_nodes) {
 				return ret;
 			};
 		return {
-
+			_isi: isIncluded,
+			_pow: pow,
 			execute: function() {
 				var that = this;
 				_.each(nodes, function(n) {
@@ -1412,7 +1413,7 @@ var allInit = function() {
                     var randomChoose = function(ind) {
                       if(Math.random() > 0.7){
                         js.list.splice(ind,1);
-                    }                      
+                    }
                     }
                     randomChoose(1);
                     randomChoose(6);

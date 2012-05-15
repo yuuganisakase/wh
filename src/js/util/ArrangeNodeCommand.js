@@ -67,7 +67,8 @@ var ArrangeNodeCommand = function(_nodes) {
 				return ret;
 			};
 		return {
-
+			_isi: isIncluded,
+			_pow: pow,
 			execute: function() {
 				var that = this;
 				_.each(nodes, function(n) {

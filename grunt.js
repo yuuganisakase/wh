@@ -65,7 +65,8 @@ module.exports = function(grunt) {
         jQuery: true
       }
     },
-    uglify: {}
+    uglify: {},
+    
   });
 
   // Default task.

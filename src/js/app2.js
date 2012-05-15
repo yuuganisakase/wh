@@ -50,7 +50,7 @@ var allInit = function() {
                     var randomChoose = function(ind) {
                       if(Math.random() > 0.7){
                         js.list.splice(ind,1);
-                    }                      
+                    }
                     }
                     randomChoose(1);
                     randomChoose(6);
