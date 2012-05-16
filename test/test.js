@@ -12,8 +12,12 @@ test('test 1', function() {
 	lc.load();
 	var models = [];
 	var nodes = [];
+	//console.log(lc.load);
+	setTimeout(function() {
+		//start();
+	}, 100);
 	lc.completeSignal.on("complete", function(obj) {
-
+		start();
 		(function(data) {
 
 			var createM = function(n) {
@@ -45,4 +49,6 @@ test('test 1', function() {
 	});
 	ok(true, "arrange node");
 	equal(3+2,5,"threee");
+	//var n = nodes[2].getRepul(nodes[3],100);
+	ok(true,"get repul");
 });

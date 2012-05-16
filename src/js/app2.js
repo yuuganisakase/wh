@@ -78,7 +78,7 @@ log("all init");
                 var collidedNum = 0;
 
                 var game = new Game(CanvasSizeW, CanvasSizeH);
-                game.fps = 20;
+                game.fps = 5;
                 var ls = new Scene();
                 game.loadingScene = ls;
                 game.preload(images);
@@ -96,16 +96,21 @@ log("all init");
                     stageSprite.image = stage;
                     var factory = new ViewFactory(stage, stageGroup, game);
 
-
+                    var me;
+                    _.each(nodes, function(n) {
+                        if(n.getType() == "me"){
+                            me = n;
+                        }
+                    });
                 game.addEventListener('enterframe', function () {
                     stage.clear();
                     TWEEN.update();
                     _.each(nodes, function(n) {
-                        n.update();
+                        n.update(me, nodes);
                     });
                     var dl = new DrawLinkCommand();
                     dl.execute(nodes, stage);
-                    
+
                     if(collidedNum > 0){
                         $(stageSprite._element).css("cursor", "pointer");
 

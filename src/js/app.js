@@ -124,6 +124,8 @@ var NodeView = Backbone.View.extend({
         var path = that.model.get("imageUrl");
         that.model.on("change:popup", that.onPopupChange, this);
 
+        this.model.set("vx", 1);
+        this.model.set("vy", 1);
         var kinds = that.getType();
 
 
@@ -161,13 +163,169 @@ var NodeView = Backbone.View.extend({
         //      }
         // }
         // context.putImageData(imgPixels, that.getPosition().x, that.getPosition().y, 0, 0, imgPixels.width, imgPixels.height);
-
         //this.game.load(path, function() {
     },
     update: function(me, nodes) {
+        var that = this;
+
         var current = this.getPosition();
-        this.setPosition(current.x + 1, current.y + 1);
+        // var goal = me.getPosition();
+        // var xDist = goal.x - current.x;
+        // var yDist = goal.y - current.y;
+        // var angle = Math.atan2(yDist, xDist);
+        // var dist = xDist * xDist + yDist*yDist;
+        // var repul = 10000 / dist;
+        // if(repul > 5){
+        //     repul = 5;
+        // }
+        // var inpul = 1;
+        // if(this.getType() == 1){
+        //     repul =  repul * 1;
+        // }else if(this.getType() == 2){
+        //     repul =  repul * 6;
+        // }
+        // var vel = this.model.get("vel") - repul + inpul;
+        // vel = vel*0.92;
+        // log("velocity");
+        // log(vel);
+        // if(me === this){
+        //     vel = 0;
+        // }
+        var ar = [];
+        _.each(nodes, function(n) {
+            var otherType = n.getType();
+            // if (that.getType() == 1) {
+            //     if (otherType === 0) {
+            //         ar.push(that.getRepul(n, 20000));
+            //     }else if (otherType == 1) {
+            //         ar.push(that.getRepul(n, 1000));
+            //     }else if (otherType == 2) {
+
+            //     }
+
+            // }
+
+            ar.push(that.getRepul(n));
+        });
+        log("ar complete");
+        log(ar);
+        var arx = 0;
+        var ary = 0;
+        _.each(ar, function(a) {
+            arx += a.x;
+            ary += a.y;
+        });
+        var vx = -arx + this.model.get("vx");
+        var vy = -ary + this.model.get("vy");
+        vx = vx * 0.95;
+        vy = vy * 0.95;
+        
+
+
+        if (this.getType() === 0) {
+            vx = 0;
+            vy = 0;
+        }
+        // if(vx > 5){
+        //     vx = 5;
+        // }else if(vx < -5){
+        //     vx = -5;
+        // }
+        // if(vy > 5){
+        //     vy = 5;
+        // }else if(vy < -5){
+        //     vy = -5;
+        // }
+
+        this.model.set("vx", vx);
+        this.model.set("vy", vy);
+
+        
+          this.setPosition(current.x + vx, current.y + vy);
+        
         this.render();
+    },
+    getRepul: function(n) {
+        if(this === n){
+            return{
+                "x":0,
+                "y":0
+            };
+        }
+        var myType = this.getType();
+        var otherType = n.getType();
+        var cof;
+        if(myType === 0){
+            return{
+                "x":0,
+                "y":0
+            };
+        }else if(myType == 1){
+            if(otherType === 0){
+                cof = 20000;
+            }else if(otherType == 1){
+                cof = 2000;
+            }else{
+                cof = 100;
+            }
+        }else if(myType == 2){
+            if(otherType === 0){
+                cof = 80000;
+            }else if(otherType == 1){
+                cof = 100;
+            }else{
+                cof = 1000;
+            }
+        }
+        var that = this;
+        var current = this.getPosition();
+        var goal = n.getPosition();
+        var xDist = goal.x - current.x;
+        var yDist = goal.y - current.y;
+        var angle = Math.atan2(yDist, xDist);
+
+        log("angle : " + angle);
+        var dist = xDist * xDist + yDist * yDist;
+        var repul = cof / dist;
+        if(repul > 5){
+            repul = 5;
+        }else if(repul < -5){
+            repul = -5;
+        }
+        var ob = {
+            "x": repul * Math.cos(angle),
+            "y": repul * Math.sin(angle)
+        };
+        if(n.getType() === 0){
+            ob.x = ob.x - Math.cos(angle);
+            ob.y = ob.y - Math.sin(angle);
+        }
+
+        
+        if(myType == 2 && otherType == 1 && that.isLinked(this,n)){
+            log("is linked");
+            ob.x = ob.x - 0.05 * Math.cos(angle);
+            ob.y = ob.y - 0.05 * Math.sin(angle);
+        }
+        return ob;
+    },
+    isLinked: function(a,b) {
+        var aid = a.getId();
+        var alink = a.getLink();
+        var bid = b.getId();
+        var blink = b.getLink();
+        var flag = false;
+        _.each(alink, function(ll) {
+            if(ll == bid){
+                flag = true;
+            }
+        });
+        _.each(blink, function(ll) {
+            if(ll == aid){
+                flag = true;
+            }
+        });
+        return flag;
     },
     createPop: function() {
         var screennameStr = this.model.get("screenName");
@@ -688,13 +846,13 @@ var DrawLinkCommand = function() {
 			execute: function(_nodes, _stage) {
 				var that = this;
 				stage = _stage;
-				log("draw line execute");
+				//log("draw line execute");
 				var already = [];
 				var nodes = _nodes;
 				_.each(nodes, function(n1) {
 					_.each(nodes, function(n2) {
 						var cl = that.checkLink(n1, n2);
-						log(cl);
+						//log(cl);
 
 
 						if (cl){
@@ -729,8 +887,8 @@ var DrawLinkCommand = function() {
 				}
 				var aPoint = a.getPosition2();
 				var bPoint = b.getPosition2();
-				log("draw line");
-				log(bPoint);
+				//log("draw line");
+				//log(bPoint);
 
 				var min = 99999;
 				var mmm;
@@ -759,7 +917,7 @@ var DrawLinkCommand = function() {
 						mmm2 = c2;
 					}
 				}
-				log(mmm);
+				//log(mmm);
 				var ctx = stage.context;
 				var color;
 				if (flag == 1) {
@@ -1450,7 +1608,7 @@ log("all init");
                 var collidedNum = 0;
 
                 var game = new Game(CanvasSizeW, CanvasSizeH);
-                game.fps = 20;
+                game.fps = 5;
                 var ls = new Scene();
                 game.loadingScene = ls;
                 game.preload(images);
@@ -1468,16 +1626,21 @@ log("all init");
                     stageSprite.image = stage;
                     var factory = new ViewFactory(stage, stageGroup, game);
 
-
+                    var me;
+                    _.each(nodes, function(n) {
+                        if(n.getType() == "me"){
+                            me = n;
+                        }
+                    });
                 game.addEventListener('enterframe', function () {
                     stage.clear();
                     TWEEN.update();
                     _.each(nodes, function(n) {
-                        n.update();
+                        n.update(me, nodes);
                     });
                     var dl = new DrawLinkCommand();
                     dl.execute(nodes, stage);
-                    
+
                     if(collidedNum > 0){
                         $(stageSprite._element).css("cursor", "pointer");
 

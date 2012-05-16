@@ -12,13 +12,13 @@ var DrawLinkCommand = function() {
 			execute: function(_nodes, _stage) {
 				var that = this;
 				stage = _stage;
-				log("draw line execute");
+				//log("draw line execute");
 				var already = [];
 				var nodes = _nodes;
 				_.each(nodes, function(n1) {
 					_.each(nodes, function(n2) {
 						var cl = that.checkLink(n1, n2);
-						log(cl);
+						//log(cl);
 
 
 						if (cl){
@@ -53,8 +53,8 @@ var DrawLinkCommand = function() {
 				}
 				var aPoint = a.getPosition2();
 				var bPoint = b.getPosition2();
-				log("draw line");
-				log(bPoint);
+				//log("draw line");
+				//log(bPoint);
 
 				var min = 99999;
 				var mmm;
@@ -83,7 +83,7 @@ var DrawLinkCommand = function() {
 						mmm2 = c2;
 					}
 				}
-				log(mmm);
+				//log(mmm);
 				var ctx = stage.context;
 				var color;
 				if (flag == 1) {
