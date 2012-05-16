@@ -237,11 +237,10 @@ var NodeView = Backbone.View.extend({
             ob.x = ob.x - Math.cos(angle);
             ob.y = ob.y - Math.sin(angle);
         }
-
         
         if(((myType == 1 && otherType == 2) ||  (myType == 2 && otherType == 1)) && that.isLinked(this,n)){
-            ob.x = ob.x - 0.05 * Math.cos(angle);
-            ob.y = ob.y - 0.05 * Math.sin(angle);
+            ob.x = ob.x - 0.1 * Math.cos(angle);
+            ob.y = ob.y - 0.1 * Math.sin(angle);
         }
         return ob;
     },
@@ -267,7 +266,6 @@ var NodeView = Backbone.View.extend({
         var screennameStr = this.model.get("screenName");
         var usernameStr = this.model.get("userName");
         var gr = new Group();
-
 
         var whiteWidth = 128;
         //var len = Math.max(screennameStr.length, usernameStr.length);
@@ -390,6 +388,8 @@ var NodeView = Backbone.View.extend({
 
 
         var ar = [a, b, c, d];
+        var center = this.getPosition2();
+        ar = [center, center, center, center];
         return ar;
     },
     render: function() {

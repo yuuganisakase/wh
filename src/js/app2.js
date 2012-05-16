@@ -105,11 +105,12 @@ log("all init");
                 game.addEventListener('enterframe', function () {
                     stage.clear();
                     TWEEN.update();
+                    var dl = new DrawLinkCommand();
+                    dl.execute(nodes, stage);
                     _.each(nodes, function(n) {
                         n.update(me, nodes);
                     });
-                    var dl = new DrawLinkCommand();
-                    dl.execute(nodes, stage);
+
 
                     if(collidedNum > 0){
                         $(stageSprite._element).css("cursor", "pointer");

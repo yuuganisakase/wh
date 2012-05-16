@@ -53,37 +53,35 @@ var DrawLinkCommand = function() {
 				}
 				var aPoint = a.getPosition2();
 				var bPoint = b.getPosition2();
-				//log("draw line");
-				//log(bPoint);
 
 				var min = 99999;
 				var mmm;
 				var four = a.getFourCenter();
-				for (var i = four.length - 1; i >= 0; i--) {
-					var c = four[i];
-					var dist = calcDist(c, bPoint);
+				mmm = four[0];
+				// for (var i = four.length - 1; i >= 0; i--) {
+				// 	var c = four[i];
+				// 	var dist = calcDist(c, bPoint);
 
-					if (dist < min) {
-						min = dist;
-						mmm = c;
-					}
-				}
+				// 	if (dist < min) {
+				// 		min = dist;
+				// 		mmm = c;
+				// 	}
+				// }
 
 				var min2 = 99999;
 				var mmm2;
 				var four2 = b.getFourCenter();
-				for (i = four.length - 1; i >= 0; i--) {
-					var c2 = four2[i];
-					var dist2 = calcDist(c2, aPoint);
-					// log("dist");
-					// log(dist2);
-					// log(four);
-					if (dist2 < min2) {
-						min2 = dist2;
-						mmm2 = c2;
-					}
-				}
-				//log(mmm);
+				mmm2 = four2[0];
+				// for (i = four.length - 1; i >= 0; i--) {
+				// 	var c2 = four2[i];
+				// 	var dist2 = calcDist(c2, aPoint);
+
+				// 	if (dist2 < min2) {
+				// 		min2 = dist2;
+				// 		mmm2 = c2;
+				// 	}
+				// }
+
 				var ctx = stage.context;
 				var color;
 				if (flag == 1) {

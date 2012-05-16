@@ -238,9 +238,7 @@ var NodeView = Backbone.View.extend({
 
         this.model.set("vx", vx);
         this.model.set("vy", vy);
-
-        
-          this.setPosition(current.x + vx, current.y + vy);
+        this.setPosition(current.x + vx, current.y + vy);
         
         this.render();
     },
@@ -298,11 +296,10 @@ var NodeView = Backbone.View.extend({
             ob.x = ob.x - Math.cos(angle);
             ob.y = ob.y - Math.sin(angle);
         }
-
         
         if(((myType == 1 && otherType == 2) ||  (myType == 2 && otherType == 1)) && that.isLinked(this,n)){
-            ob.x = ob.x - 0.05 * Math.cos(angle);
-            ob.y = ob.y - 0.05 * Math.sin(angle);
+            ob.x = ob.x - 0.1 * Math.cos(angle);
+            ob.y = ob.y - 0.1 * Math.sin(angle);
         }
         return ob;
     },
@@ -328,7 +325,6 @@ var NodeView = Backbone.View.extend({
         var screennameStr = this.model.get("screenName");
         var usernameStr = this.model.get("userName");
         var gr = new Group();
-
 
         var whiteWidth = 128;
         //var len = Math.max(screennameStr.length, usernameStr.length);
@@ -451,6 +447,8 @@ var NodeView = Backbone.View.extend({
 
 
         var ar = [a, b, c, d];
+        var center = this.getPosition2();
+        ar = [center, center, center, center];
         return ar;
     },
     render: function() {
@@ -898,37 +896,35 @@ var DrawLinkCommand = function() {
 				}
 				var aPoint = a.getPosition2();
 				var bPoint = b.getPosition2();
-				//log("draw line");
-				//log(bPoint);
 
 				var min = 99999;
 				var mmm;
 				var four = a.getFourCenter();
-				for (var i = four.length - 1; i >= 0; i--) {
-					var c = four[i];
-					var dist = calcDist(c, bPoint);
+				mmm = four[0];
+				// for (var i = four.length - 1; i >= 0; i--) {
+				// 	var c = four[i];
+				// 	var dist = calcDist(c, bPoint);
 
-					if (dist < min) {
-						min = dist;
-						mmm = c;
-					}
-				}
+				// 	if (dist < min) {
+				// 		min = dist;
+				// 		mmm = c;
+				// 	}
+				// }
 
 				var min2 = 99999;
 				var mmm2;
 				var four2 = b.getFourCenter();
-				for (i = four.length - 1; i >= 0; i--) {
-					var c2 = four2[i];
-					var dist2 = calcDist(c2, aPoint);
-					// log("dist");
-					// log(dist2);
-					// log(four);
-					if (dist2 < min2) {
-						min2 = dist2;
-						mmm2 = c2;
-					}
-				}
-				//log(mmm);
+				mmm2 = four2[0];
+				// for (i = four.length - 1; i >= 0; i--) {
+				// 	var c2 = four2[i];
+				// 	var dist2 = calcDist(c2, aPoint);
+
+				// 	if (dist2 < min2) {
+				// 		min2 = dist2;
+				// 		mmm2 = c2;
+				// 	}
+				// }
+
 				var ctx = stage.context;
 				var color;
 				if (flag == 1) {
@@ -1646,11 +1642,12 @@ log("all init");
                 game.addEventListener('enterframe', function () {
                     stage.clear();
                     TWEEN.update();
+                    var dl = new DrawLinkCommand();
+                    dl.execute(nodes, stage);
                     _.each(nodes, function(n) {
                         n.update(me, nodes);
                     });
-                    var dl = new DrawLinkCommand();
-                    dl.execute(nodes, stage);
+
 
                     if(collidedNum > 0){
                         $(stageSprite._element).css("cursor", "pointer");
