@@ -72,7 +72,7 @@ var NodeView = Backbone.View.extend({
         }
     },
     popUp: function() {
-
+        this.updatePopupGroupPosition(this.model.get("gr"));
         this.stageSprite.addChild(this.model.get("gr"));
         var pop = this.model.get("pop");
         pop.opacity = 0.5;
@@ -82,14 +82,14 @@ var NodeView = Backbone.View.extend({
             opacity: 1,
             scaleX: 1,
             scaleY: 1
-        }, 70).start();
+        }, 10).start();
         var misc = this.model.get("misc");
         _.each(misc, function(m) {
             m.opacity = 0;
             var tween2 = new TWEEN.Tween(m);
             tween2.to({
                 opacity: 1
-            }, 90).start();
+            }, 10).start();
         });
 
     },
@@ -101,7 +101,7 @@ var NodeView = Backbone.View.extend({
             opacity: 0.5,
             scaleY: 0,
             scaleX: 0.4
-        }, 180);
+        }, 10);
 
         tween.onComplete(function() {
             that.stageSprite.removeChild(that.model.get("gr"));
@@ -112,7 +112,7 @@ var NodeView = Backbone.View.extend({
             var tween2 = new TWEEN.Tween(m);
             tween2.to({
                 opacity: 0
-            }, 60);
+            }, 10);
             tween2.start();
         });
 
@@ -207,8 +207,7 @@ var NodeView = Backbone.View.extend({
 
             ar.push(that.getRepul(n));
         });
-        log("ar complete");
-        log(ar);
+        
         var arx = 0;
         var ary = 0;
         _.each(ar, function(a) {
@@ -262,7 +261,7 @@ var NodeView = Backbone.View.extend({
             };
         }else if(myType == 1){
             if(otherType === 0){
-                cof = 20000;
+                cof = 15000;
             }else if(otherType == 1){
                 cof = 2000;
             }else{
@@ -270,7 +269,7 @@ var NodeView = Backbone.View.extend({
             }
         }else if(myType == 2){
             if(otherType === 0){
-                cof = 80000;
+                cof = 70000;
             }else if(otherType == 1){
                 cof = 100;
             }else{
@@ -284,7 +283,6 @@ var NodeView = Backbone.View.extend({
         var yDist = goal.y - current.y;
         var angle = Math.atan2(yDist, xDist);
 
-        log("angle : " + angle);
         var dist = xDist * xDist + yDist * yDist;
         var repul = cof / dist;
         if(repul > 5){
@@ -302,8 +300,7 @@ var NodeView = Backbone.View.extend({
         }
 
         
-        if(myType == 2 && otherType == 1 && that.isLinked(this,n)){
-            log("is linked");
+        if(((myType == 1 && otherType == 2) ||  (myType == 2 && otherType == 1)) && that.isLinked(this,n)){
             ob.x = ob.x - 0.05 * Math.cos(angle);
             ob.y = ob.y - 0.05 * Math.sin(angle);
         }
@@ -370,8 +367,7 @@ var NodeView = Backbone.View.extend({
             config = this.config.other;
         }
 
-        gr.x = this.getPosition().x - config.borderWidth;
-        gr.y = this.getPosition().y + config.size + config.borderWidth;
+        this.updatePopupGroupPosition(gr);
         pop.backgroundColor = "#ff0000";
         $(pop._element).append(white);
 
@@ -402,6 +398,18 @@ var NodeView = Backbone.View.extend({
         gr.addChild(userLabel);
         gr.addChild(timeLabel);
         gr.addChild(clockSp);
+    },
+    updatePopupGroupPosition: function(a) {
+        var config;
+        if(this.getType() === 0){
+            config = this.config.me;
+        }else if(this.getType() == 1){
+            config = this.config.friend;
+        }else{
+            config = this.config.other;
+        }
+        a.x = this.getPosition().x - config.borderWidth;
+        a.y = this.getPosition().y + config.size + config.borderWidth;
     },
     onPopupChange: function(a) {
         var that = this;
@@ -448,7 +456,7 @@ var NodeView = Backbone.View.extend({
     render: function() {
         var that = this;
         var path = that.model.get("imageUrl");
-
+        this.updatePopupGroupPosition(this.model.get("gr"));
         var image = that.game.assets[path];
         var context = that.stage.context;
 
@@ -466,14 +474,17 @@ var NodeView = Backbone.View.extend({
         context.beginPath();
         var pos = that.getPosition();
         context.lineWidth = bw;
-        context.moveTo(pos.x - bw / 2, pos.y - bw / 2);
-        context.lineTo(pos.x + bw / 2 + size, pos.y - bw / 2);
-        context.lineTo(pos.x + bw / 2 + size, pos.y + bw / 2 + size);
-        context.lineTo(pos.x - bw / 2, pos.y + bw / 2 + size);
-        context.lineTo(pos.x - bw / 2, pos.y - bw / 2);
+        pos.x = Math.floor(pos.x);
+        pos.y = Math.floor(pos.y);
+        var bw2 = Math.floor(bw/2);
+        context.moveTo(pos.x - bw2, pos.y - bw2);
+        context.lineTo(pos.x + bw2 + size, pos.y - bw2);
+        context.lineTo(pos.x + bw2 + size, pos.y + bw2 + size);
+        context.lineTo(pos.x - bw2, pos.y + bw2 + size);
+        context.lineTo(pos.x - bw2, pos.y - bw2);
         context.closePath();
         context.stroke();
-        that.stage.draw(image, 0, 0, 50, 50, that.getPosition().x, that.getPosition().y, size, size);
+        that.stage.draw(image, 0, 0, 50, 50, pos.x, pos.y, size, size);
         context.globalAlpha = 1;
     },
     checkCollided: function(xx, yy) {
@@ -1569,7 +1580,7 @@ log("all init");
                     var ran = Math.random();
 
                     var randomChoose = function(ind) {
-                      if(Math.random() > 0){
+                      if(Math.random() > 1){
                         js.list.splice(ind,1);
                         }
                     };
@@ -1608,7 +1619,7 @@ log("all init");
                 var collidedNum = 0;
 
                 var game = new Game(CanvasSizeW, CanvasSizeH);
-                game.fps = 5;
+                game.fps = 10;
                 var ls = new Scene();
                 game.loadingScene = ls;
                 game.preload(images);

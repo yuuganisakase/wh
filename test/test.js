@@ -21,7 +21,6 @@ test('test 1', function() {
 		(function(data) {
 
 			var createM = function(n) {
-
 					var m = new NodeModel(n, {
 						"store": store
 					});

@@ -39,7 +39,7 @@ log("all init");
                     var ran = Math.random();
 
                     var randomChoose = function(ind) {
-                      if(Math.random() > 0){
+                      if(Math.random() > 1){
                         js.list.splice(ind,1);
                         }
                     };
@@ -78,7 +78,7 @@ log("all init");
                 var collidedNum = 0;
 
                 var game = new Game(CanvasSizeW, CanvasSizeH);
-                game.fps = 5;
+                game.fps = 10;
                 var ls = new Scene();
                 game.loadingScene = ls;
                 game.preload(images);
