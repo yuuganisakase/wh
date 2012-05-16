@@ -61,160 +61,163 @@ var NodeView = Backbone.View.extend({
 
     onClick: function(e) {
         var url = "https://www.facebook.com/" + this.model.get("userId");
-        window.open(url , "_blank");
+        window.open(url, "_blank");
     },
-    onMousemove: function(xx,yy) {
-        if(this.checkCollided(xx,yy)){
+    onMousemove: function(xx, yy) {
+        if (this.checkCollided(xx, yy)) {
             this.model.set("popup", false);
             this.eventBus.trigger("collided");
-        }else{
+        } else {
             this.model.set("popup", true);
         }
     },
-    popUp:function() {
+    popUp: function() {
 
         this.stageSprite.addChild(this.model.get("gr"));
         var pop = this.model.get("pop");
         pop.opacity = 0.5;
         pop.scaleX = 0.4;
         pop.scaleY = 0;
-        var tween = new TWEEN.Tween(pop).to({opacity: 1,scaleX:1, scaleY:1}, 70).start();
+        var tween = new TWEEN.Tween(pop).to({
+            opacity: 1,
+            scaleX: 1,
+            scaleY: 1
+        }, 70).start();
         var misc = this.model.get("misc");
         _.each(misc, function(m) {
             m.opacity = 0;
             var tween2 = new TWEEN.Tween(m);
-            tween2.to({opacity: 1}, 90).start();
+            tween2.to({
+                opacity: 1
+            }, 90).start();
         });
 
     },
-    popDown:function() {
+    popDown: function() {
         var that = this;
         var pop = this.model.get("pop");
         var tween = new TWEEN.Tween(pop);
-        tween.to({opacity: 0.5,scaleY:0, scaleX:0.4}, 180);
+        tween.to({
+            opacity: 0.5,
+            scaleY: 0,
+            scaleX: 0.4
+        }, 180);
 
-        tween.onComplete(function(){
+        tween.onComplete(function() {
             that.stageSprite.removeChild(that.model.get("gr"));
         });
         tween.start();
 
         _.each(this.model.get("misc"), function(m) {
             var tween2 = new TWEEN.Tween(m);
-            tween2.to({opacity: 0}, 60);
+            tween2.to({
+                opacity: 0
+            }, 60);
             tween2.start();
         });
 
-    },
-    config: {
-        me: {
-            size: 64,
-            borderWidth: 8,
-            borderColor: "#00ff00"
-        },
-        friend: {
-            size: 32,
-            borderWidth: 4,
-            borderColor: "#00ff00"
-        },
-        other: {
-            size: 48,
-            borderWidth: 6,
-            borderColor: "#ff00ff"
-        }
     },
     init: function() {
         var that = this;
         this.createPop();
 
         var path = that.model.get("imageUrl");
-        that.model.on("change:popup", that.onPopupChange ,this);
-        that.render();
+        that.model.on("change:popup", that.onPopupChange, this);
+
+        var kinds = that.getType();
+
+
+        var size;
+        var color;
+        var bw;
+        if (kinds === 0) {
+            size = that.config.me.size;
+            color = that.config.me.borderColor;
+            bw = that.config.me.borderWidth;
+        } else if (kinds === 1) {
+            size = that.config.friend.size;
+            color = that.config.friend.borderColor;
+            bw = that.config.friend.borderWidth;
+        } else {
+            size = that.config.other.size;
+            color = that.config.other.borderColor;
+            bw = that.config.other.borderWidth;
+        }
+        this.model.set("size", size);
+        this.model.set("borderColor", color);
+        this.model.set("borderWidth", bw);
+        this.render();
+        //context.fillStyle = "rgba(152,152,152,0.4)";
+        //context.fillRect(that.getPosition().x ,that.getPosition().y,size,size);
+        //security error of cross origin policy
+        // var imgPixels = context.getImageData(that.getPosition().x, that.getPosition().y, size, size);
+        // for(var y = 0; y < imgPixels.height; y++){
+        //      for(var x = 0; x < imgPixels.width; x++){
+        //           var i = (y * 4) * imgPixels.width + x * 4;
+        //           var avg = (imgPixels.data[i] + imgPixels.data[i + 1] + imgPixels.data[i + 2]) / 3;
+        //           imgPixels.data[i] = avg;
+        //           imgPixels.data[i + 1] = avg;
+        //           imgPixels.data[i + 2] = avg;
+        //      }
+        // }
+        // context.putImageData(imgPixels, that.getPosition().x, that.getPosition().y, 0, 0, imgPixels.width, imgPixels.height);
 
         //this.game.load(path, function() {
-            var path = that.model.get("imageUrl");
-
-            var image = that.game.assets[path];
-            var context = that.stage.context;
-
-            var timeObj = this.model.get("time");
-            var time = (+timeObj.hour) * 60 + (+timeObj.min);
-            var alpha = (250 - time) / 250;
-            if(time < 50){
-                alpha = 1;
-            }
-            context.globalAlpha = alpha;
-            var size = that.model.get("size");
-            var bw = that.model.get("borderWidth");
-            context.strokeStyle = that.model.get("borderColor");
-            context.fillStyle = that.model.get("borderColor");
-            context.beginPath();
-            var pos = that.getPosition();
-context.lineWidth = bw;
-  context.moveTo(pos.x - bw/2, pos.y - bw/2);
-  context.lineTo(pos.x + bw/2 + size, pos.y - bw/2);
-  context.lineTo(pos.x + bw/2 + size, pos.y + bw/2 + size);
-  context.lineTo(pos.x - bw/2, pos.y + bw/2 + size);
-  context.lineTo(pos.x - bw/2, pos.y - bw/2);
-  context.closePath();
-  context.stroke();
-           // context.fillRect(that.getPosition().x - bw,that.getPosition().y - bw,size+bw*2,size+bw*2);
-            that.stage.draw(image, 0, 0, 50, 50, that.getPosition().x, that.getPosition().y, size, size);
-context.globalAlpha = 1;
-            //that.render();
-       // });
-
+    },
+    update: function(me, nodes) {
+        var current = this.getPosition();
+        this.setPosition(current.x + 1, current.y + 1);
+        this.render();
     },
     createPop: function() {
         var screennameStr = this.model.get("screenName");
         var usernameStr = this.model.get("userName");
         var gr = new Group();
 
-        
+
         var whiteWidth = 128;
         //var len = Math.max(screennameStr.length, usernameStr.length);
         var len = screennameStr.length;
-        if(len >= 13){
-            whiteWidth = 128 + (len - 13)*10;
+        if (len >= 13) {
+            whiteWidth = 128 + (len - 13) * 10;
         }
-        
+
         var white = "<div style='position: absolute; width: " + whiteWidth + "px; height: 64px; overflow: hidden; background-color: rgb(255, 255, 255);'></div> ";
-        
+
         var screenLabel = new Label(screennameStr);
         screenLabel.className = "screenname";
         screenLabel.color = this.model.get("borderColor");
         screenLabel.x = 8;
         screenLabel.y = 4;
         //this.model.set("screenlabel", screenLabel);
-
         var userLabel = new Label(usernameStr);
         userLabel.className = "username";
         userLabel.color = "#000000";
         userLabel.x = 8;
         userLabel.y = 20;
         //this.model.set("userlabel", userLabel);
-
-        var pop = new Sprite(0,0);
-        this.model.set("gr",gr);
-        this.model.set("pop",pop);
+        var pop = new Sprite(0, 0);
+        this.model.set("gr", gr);
+        this.model.set("pop", pop);
         pop._style.overflow = '';
-        
+
         var type = this.getType();
 
         var config;
-        if(type === 0){
+        if (type === 0) {
             config = this.config.me;
-        }else if(type === 1){
+        } else if (type === 1) {
             config = this.config.friend;
-        }else{
+        } else {
             config = this.config.other;
         }
-        
+
         gr.x = this.getPosition().x - config.borderWidth;
         gr.y = this.getPosition().y + config.size + config.borderWidth;
         pop.backgroundColor = "#ff0000";
         $(pop._element).append(white);
 
-        var blackBack = new Sprite(112,16);
+        var blackBack = new Sprite(112, 16);
         blackBack.backgroundColor = "#000000";
         blackBack.x = 8;
         blackBack.y = 40;
@@ -233,7 +236,7 @@ context.globalAlpha = 1;
         timeLabel.y = 40;
 
         var misc = [blackBack, screenLabel, userLabel, timeLabel, clockSp];
-        this.model.set("misc",misc);
+        this.model.set("misc", misc);
 
         gr.addChild(pop);
         gr.addChild(blackBack);
@@ -242,13 +245,13 @@ context.globalAlpha = 1;
         gr.addChild(timeLabel);
         gr.addChild(clockSp);
     },
-    onPopupChange:function(a) {
+    onPopupChange: function(a) {
         var that = this;
-        if( this.model.get("popup") === true){
+        if (this.model.get("popup") === true) {
             this.popDown();
-        }else{
+        } else {
             setTimeout(function() {
-                if(that.model.get("popup") === false){
+                if (that.model.get("popup") === false) {
                     that.popUp();
                 }
             }, 100);
@@ -258,85 +261,71 @@ context.globalAlpha = 1;
         x: 100,
         y: 100
     },
-    getFourCenter:function() {
+    getFourCenter: function() {
         var that = this;
         var size = that.model.get("size");
         var bw = that.model.get("borderWidth");
 
         var a = {
-            "x" : that.getPosition().x + size/2,
-            "y" : that.getPosition().y - bw
+            "x": that.getPosition().x + size / 2,
+            "y": that.getPosition().y - bw
         };
         var b = {
-            "x" : that.getPosition().x + size + bw,
-            "y" : that.getPosition().y + size/2
+            "x": that.getPosition().x + size + bw,
+            "y": that.getPosition().y + size / 2
         };
         var c = {
-            "x" : that.getPosition().x + size/2,
-            "y" : that.getPosition().y + size + bw
+            "x": that.getPosition().x + size / 2,
+            "y": that.getPosition().y + size + bw
         };
         var d = {
-            "x" : that.getPosition().x - bw,
-            "y" : that.getPosition().y + size/2
+            "x": that.getPosition().x - bw,
+            "y": that.getPosition().y + size / 2
         };
-        
-        
-        var ar = [a,b,c,d];
+
+
+        var ar = [a, b, c, d];
         return ar;
     },
     render: function() {
         var that = this;
-        var kinds = that.getType();
-        
-        
-        var size;
-        var color;
-        var bw;
-        if (kinds === 0) {
-            size = that.config.me.size;
-            color = that.config.me.borderColor;
-            bw = that.config.me.borderWidth;
-        } else if (kinds === 1) {
-            size = that.config.friend.size;
-            color = that.config.friend.borderColor;
-            bw = that.config.friend.borderWidth;
-        } else {
-            size = that.config.other.size;
-            color = that.config.other.borderColor;
-            bw = that.config.other.borderWidth;
+        var path = that.model.get("imageUrl");
+
+        var image = that.game.assets[path];
+        var context = that.stage.context;
+
+        var timeObj = this.model.get("time");
+        var time = (+timeObj.hour) * 60 + (+timeObj.min);
+        var alpha = (250 - time) / 250;
+        if (time < 50) {
+            alpha = 1;
         }
-        this.model.set("size",size);
-        this.model.set("borderColor",color);
-        this.model.set("borderWidth",bw);
-
-        //context.fillStyle = "rgba(152,152,152,0.4)";
-
-        //context.fillRect(that.getPosition().x ,that.getPosition().y,size,size);
-
-//security error of cross origin policy
-
-        // var imgPixels = context.getImageData(that.getPosition().x, that.getPosition().y, size, size);
-
-        // for(var y = 0; y < imgPixels.height; y++){
-        //      for(var x = 0; x < imgPixels.width; x++){
-        //           var i = (y * 4) * imgPixels.width + x * 4;
-        //           var avg = (imgPixels.data[i] + imgPixels.data[i + 1] + imgPixels.data[i + 2]) / 3;
-        //           imgPixels.data[i] = avg;
-        //           imgPixels.data[i + 1] = avg;
-        //           imgPixels.data[i + 2] = avg;
-        //      }
-        // }
-        // context.putImageData(imgPixels, that.getPosition().x, that.getPosition().y, 0, 0, imgPixels.width, imgPixels.height);
-
+        context.globalAlpha = alpha;
+        var size = that.model.get("size");
+        var bw = that.model.get("borderWidth");
+        context.strokeStyle = that.model.get("borderColor");
+        context.fillStyle = that.model.get("borderColor");
+        context.beginPath();
+        var pos = that.getPosition();
+        context.lineWidth = bw;
+        context.moveTo(pos.x - bw / 2, pos.y - bw / 2);
+        context.lineTo(pos.x + bw / 2 + size, pos.y - bw / 2);
+        context.lineTo(pos.x + bw / 2 + size, pos.y + bw / 2 + size);
+        context.lineTo(pos.x - bw / 2, pos.y + bw / 2 + size);
+        context.lineTo(pos.x - bw / 2, pos.y - bw / 2);
+        context.closePath();
+        context.stroke();
+        that.stage.draw(image, 0, 0, 50, 50, that.getPosition().x, that.getPosition().y, size, size);
+        context.globalAlpha = 1;
     },
-    checkCollided: function(xx,yy) {
-        var xDis = Math.abs(xx - this.getPosition().x - this.model.get("size")/2);
-        var yDis = Math.abs(yy - this.getPosition().y - this.model.get("size")/2);
+    checkCollided: function(xx, yy) {
+        var xDis = Math.abs(xx - this.getPosition().x - this.model.get("size") / 2);
+        var yDis = Math.abs(yy - this.getPosition().y - this.model.get("size") / 2);
 
         var crit = 35;
-        if(xDis < crit && yDis < crit){
+        if (xDis < crit && yDis < crit) {
             return true;
-        }else{
+        } else {
             return false;
         }
     },
@@ -348,29 +337,49 @@ context.globalAlpha = 1;
     },
     getPosition: function() {
         var pos = {
-            x:this.model.get("x"),
-            y:this.model.get("y")
+            x: this.model.get("x"),
+            y: this.model.get("y")
         };
         return pos;
     },
     getPosition2: function() {
         var pos = {
-            x:this.model.get("x") + this.model.get("size")/2,
-            y:this.model.get("y") + this.model.get("size")/2
+            x: this.model.get("x") + this.model.get("size") / 2,
+            y: this.model.get("y") + this.model.get("size") / 2
         };
         return pos;
     },
     getLink: function() {
         var n = this.model.get("link");
-        if(_.isUndefined(n)) n = [];
+        if (_.isUndefined(n)) n = [];
         return n;
     },
     setPosition: function(_x, _y) {
-        var xx = Math.floor(_x);
-        var yy = Math.floor(_y);
-        this.model.set({"x":xx, "y":yy});
+        //var xx = Math.floor(_x);
+        //var yy = Math.floor(_y);
+        this.model.set({
+            "x": _x,
+            "y": _y
+        });
     }
 });
+NodeView.prototype.config = {
+    me: {
+        size: 64,
+        borderWidth: 8,
+        borderColor: "#00ff00"
+    },
+    friend: {
+        size: 32,
+        borderWidth: 4,
+        borderColor: "#00ff00"
+    },
+    other: {
+        size: 48,
+        borderWidth: 6,
+        borderColor: "#ff00ff"
+    }
+};
 var HeaderView = Backbone.View.extend({
 
     onClick: function(e) {
@@ -458,6 +467,7 @@ var LoadCommand = function() {
 			load: function() {
 				var that = this;
 				if (local === true) {
+					log("load command");
 
 					$.ajax({
 						url: "debug/nodeList.json",
@@ -950,7 +960,7 @@ var ArrangeNodeCommand = function(_nodes) {
 				});
 				ar = that.sortBySimilarity(ar, 2);
 				var oneAngle = pi * 2 / num;
-				var currentAngle = Math.random()*0.3;
+				var currentAngle = Math.random() * 0.3;
 				var dd;
 
 				_.each(ar, function(n) {
@@ -962,7 +972,7 @@ var ArrangeNodeCommand = function(_nodes) {
 					}
 					that.placeNodeFromCenter(n, dd, currentAngle);
 					n.angle = currentAngle;
-					currentAngle += (oneAngle*0.9 + Math.random()*oneAngle*0.2);
+					currentAngle += (oneAngle * 0.9 + Math.random() * oneAngle * 0.2);
 
 				});
 
@@ -979,26 +989,25 @@ var ArrangeNodeCommand = function(_nodes) {
 				if (ar.length > 0) {
 
 					//while (true) {
-						var obj = getFromTypeBack(top.simArray, type);
-						var lastid = obj.id;
-						//top.simArray[top.simArray.length - 1].id;
-						log(lastid);
-						non = getFromId(ar, lastid);
-						if(non !== 0){
+					var obj = getFromTypeBack(top.simArray, type);
+					var lastid = obj.id;
+					//top.simArray[top.simArray.length - 1].id;
+					log(lastid);
+					non = getFromId(ar, lastid);
+					if (non !== 0) {
 						//if(true){
-							there.push(non);
-							ar = _.without(ar, non);
-							//break;
-						}else{
-							//top.simArray = _.without(top.simArray, obj);
-							log(obj);
-							log(top.simArray);
-							there.push(ar[0]);
-							ar = _.without(ar,ar[0]);
-						}
-						log(non);
+						there.push(non);
+						ar = _.without(ar, non);
+						//break;
+					} else {
+						//top.simArray = _.without(top.simArray, obj);
+						log(obj);
+						log(top.simArray);
+						there.push(ar[0]);
+						ar = _.without(ar, ar[0]);
+					}
+					log(non);
 					//}
-
 				}
 				log(ar);
 				log(here);
@@ -1019,7 +1028,7 @@ var ArrangeNodeCommand = function(_nodes) {
 							if (isIncluded(ar, simar[i].id)) {
 								top = getFromId(ar, simar[i].id);
 								if (top !== 0) {
-								//if(true){
+									//if(true){
 									i = simar.length;
 									here.push(top);
 									ar = _.without(ar, top);
@@ -1037,7 +1046,7 @@ var ArrangeNodeCommand = function(_nodes) {
 								if (isIncluded(ar, simar[i].id)) {
 									non = getFromId(ar, simar[i].id);
 									//if (non !== 0) {
-									if(true){
+									if (true) {
 
 										i = simar.length;
 										ar = _.without(ar, non);
@@ -1073,7 +1082,7 @@ var ArrangeNodeCommand = function(_nodes) {
 				});
 
 				var oneAngle = pi * 2 / num;
-				var currentAngle = Math.random()*0.3;
+				var currentAngle = Math.random() * 0.3;
 
 				var anglePossibility = [0];
 				for (var i = 0; i < num; i++) {
@@ -1123,7 +1132,7 @@ var ArrangeNodeCommand = function(_nodes) {
 						}
 						that.placeNodeFromCenter(n, dd, currentAngle);
 						n.angle = currentAngle;
-						currentAngle += (oneAngle*0.9 + oneAngle*Math.random()*0.2);
+						currentAngle += (oneAngle * 0.9 + oneAngle * Math.random() * 0.2);
 						that.already.push(n);
 
 					}
@@ -1144,7 +1153,7 @@ var ArrangeNodeCommand = function(_nodes) {
 					//log(out);
 					//log(l);
 					if (out !== 0) {
-					//if(true){
+						//if(true){
 						if (out.getType() == 2) {
 							num += 1;
 							angles += out.angle;
@@ -1373,21 +1382,20 @@ var store = {};
 var FBp = new FBproxy(store);
 
 var allInit = function() {
-
+log("all init");
         var models = [];
         var nodes = [];
                 var images = ['assets/help.png','assets/help_hover.png',
                             'assets/logo.png','assets/logo_hover.png',
                             'assets/logout.png','assets/logout_hover.png',
                             "assets/clock.png"];
-        window.fbAsyncInit = function() {
+        //window.fbAsyncInit = function() {
+        (function(){
             var lc = new LoadCommand();
             lc.load();
             lc.completeSignal.on("complete", function(obj) {
                 log("load complete in app");
                 log(obj);
-
-                //obj = obj.splice(0,4);
 
                 (function(data) {
 
@@ -1401,20 +1409,12 @@ var allInit = function() {
 
                     var js = JSON.parse(data);
                     var ran = Math.random();
-                    // if(ran > 0.8){
 
-                    // }else if(ran > 0.6){
-                    //     js.list.splice(6,1);
-                    // }else if(ran > 0.4){
-                    //     js.list.splice(7,1);
-                    // }else if(ran > 0.2){
-                    //     js.list.splice(12,1);
-                    // }
                     var randomChoose = function(ind) {
-                      if(Math.random() > 0.7){
+                      if(Math.random() > 0){
                         js.list.splice(ind,1);
-                    }
-                    }
+                        }
+                    };
                     randomChoose(1);
                     randomChoose(6);
                     randomChoose(7);
@@ -1437,7 +1437,7 @@ var allInit = function() {
                 log(images);
                 start();
             });
-        };
+        })()
 
 
         var start = function() {
@@ -1470,8 +1470,14 @@ var allInit = function() {
 
 
                 game.addEventListener('enterframe', function () {
+                    stage.clear();
                     TWEEN.update();
-
+                    _.each(nodes, function(n) {
+                        n.update();
+                    });
+                    var dl = new DrawLinkCommand();
+                    dl.execute(nodes, stage);
+                    
                     if(collidedNum > 0){
                         $(stageSprite._element).css("cursor", "pointer");
 

@@ -12,6 +12,7 @@ var LoadCommand = function() {
 			load: function() {
 				var that = this;
 				if (local === true) {
+					log("load command");
 
 					$.ajax({
 						url: "debug/nodeList.json",

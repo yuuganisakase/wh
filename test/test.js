@@ -44,5 +44,5 @@ test('test 1', function() {
 		//equal(arrangeCommand._pow(3),1,"power");
 	});
 	ok(true, "arrange node");
-	equal(3+2,2,"threee");
+	equal(3+2,5,"threee");
 });

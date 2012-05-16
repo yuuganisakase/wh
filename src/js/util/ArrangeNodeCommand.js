@@ -132,7 +132,7 @@ var ArrangeNodeCommand = function(_nodes) {
 				});
 				ar = that.sortBySimilarity(ar, 2);
 				var oneAngle = pi * 2 / num;
-				var currentAngle = Math.random()*0.3;
+				var currentAngle = Math.random() * 0.3;
 				var dd;
 
 				_.each(ar, function(n) {
@@ -144,7 +144,7 @@ var ArrangeNodeCommand = function(_nodes) {
 					}
 					that.placeNodeFromCenter(n, dd, currentAngle);
 					n.angle = currentAngle;
-					currentAngle += (oneAngle*0.9 + Math.random()*oneAngle*0.2);
+					currentAngle += (oneAngle * 0.9 + Math.random() * oneAngle * 0.2);
 
 				});
 
@@ -161,26 +161,25 @@ var ArrangeNodeCommand = function(_nodes) {
 				if (ar.length > 0) {
 
 					//while (true) {
-						var obj = getFromTypeBack(top.simArray, type);
-						var lastid = obj.id;
-						//top.simArray[top.simArray.length - 1].id;
-						log(lastid);
-						non = getFromId(ar, lastid);
-						if(non !== 0){
+					var obj = getFromTypeBack(top.simArray, type);
+					var lastid = obj.id;
+					//top.simArray[top.simArray.length - 1].id;
+					log(lastid);
+					non = getFromId(ar, lastid);
+					if (non !== 0) {
 						//if(true){
-							there.push(non);
-							ar = _.without(ar, non);
-							//break;
-						}else{
-							//top.simArray = _.without(top.simArray, obj);
-							log(obj);
-							log(top.simArray);
-							there.push(ar[0]);
-							ar = _.without(ar,ar[0]);
-						}
-						log(non);
+						there.push(non);
+						ar = _.without(ar, non);
+						//break;
+					} else {
+						//top.simArray = _.without(top.simArray, obj);
+						log(obj);
+						log(top.simArray);
+						there.push(ar[0]);
+						ar = _.without(ar, ar[0]);
+					}
+					log(non);
 					//}
-
 				}
 				log(ar);
 				log(here);
@@ -201,7 +200,7 @@ var ArrangeNodeCommand = function(_nodes) {
 							if (isIncluded(ar, simar[i].id)) {
 								top = getFromId(ar, simar[i].id);
 								if (top !== 0) {
-								//if(true){
+									//if(true){
 									i = simar.length;
 									here.push(top);
 									ar = _.without(ar, top);
@@ -219,7 +218,7 @@ var ArrangeNodeCommand = function(_nodes) {
 								if (isIncluded(ar, simar[i].id)) {
 									non = getFromId(ar, simar[i].id);
 									//if (non !== 0) {
-									if(true){
+									if (true) {
 
 										i = simar.length;
 										ar = _.without(ar, non);
@@ -255,7 +254,7 @@ var ArrangeNodeCommand = function(_nodes) {
 				});
 
 				var oneAngle = pi * 2 / num;
-				var currentAngle = Math.random()*0.3;
+				var currentAngle = Math.random() * 0.3;
 
 				var anglePossibility = [0];
 				for (var i = 0; i < num; i++) {
@@ -305,7 +304,7 @@ var ArrangeNodeCommand = function(_nodes) {
 						}
 						that.placeNodeFromCenter(n, dd, currentAngle);
 						n.angle = currentAngle;
-						currentAngle += (oneAngle*0.9 + oneAngle*Math.random()*0.2);
+						currentAngle += (oneAngle * 0.9 + oneAngle * Math.random() * 0.2);
 						that.already.push(n);
 
 					}
@@ -326,7 +325,7 @@ var ArrangeNodeCommand = function(_nodes) {
 					//log(out);
 					//log(l);
 					if (out !== 0) {
-					//if(true){
+						//if(true){
 						if (out.getType() == 2) {
 							num += 1;
 							angles += out.angle;

@@ -10,21 +10,20 @@ var store = {};
 var FBp = new FBproxy(store);
 
 var allInit = function() {
-
+log("all init");
         var models = [];
         var nodes = [];
                 var images = ['assets/help.png','assets/help_hover.png',
                             'assets/logo.png','assets/logo_hover.png',
                             'assets/logout.png','assets/logout_hover.png',
                             "assets/clock.png"];
-        window.fbAsyncInit = function() {
+        //window.fbAsyncInit = function() {
+        (function(){
             var lc = new LoadCommand();
             lc.load();
             lc.completeSignal.on("complete", function(obj) {
                 log("load complete in app");
                 log(obj);
-
-                //obj = obj.splice(0,4);
 
                 (function(data) {
 
@@ -38,20 +37,12 @@ var allInit = function() {
 
                     var js = JSON.parse(data);
                     var ran = Math.random();
-                    // if(ran > 0.8){
 
-                    // }else if(ran > 0.6){
-                    //     js.list.splice(6,1);
-                    // }else if(ran > 0.4){
-                    //     js.list.splice(7,1);
-                    // }else if(ran > 0.2){
-                    //     js.list.splice(12,1);
-                    // }
                     var randomChoose = function(ind) {
-                      if(Math.random() > 0.7){
+                      if(Math.random() > 0){
                         js.list.splice(ind,1);
-                    }
-                    }
+                        }
+                    };
                     randomChoose(1);
                     randomChoose(6);
                     randomChoose(7);
@@ -74,7 +65,7 @@ var allInit = function() {
                 log(images);
                 start();
             });
-        };
+        })()
 
 
         var start = function() {
@@ -107,8 +98,14 @@ var allInit = function() {
 
 
                 game.addEventListener('enterframe', function () {
+                    stage.clear();
                     TWEEN.update();
-
+                    _.each(nodes, function(n) {
+                        n.update();
+                    });
+                    var dl = new DrawLinkCommand();
+                    dl.execute(nodes, stage);
+                    
                     if(collidedNum > 0){
                         $(stageSprite._element).css("cursor", "pointer");
 
