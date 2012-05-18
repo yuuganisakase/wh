@@ -8,14 +8,13 @@ module('test test', {
 
 test('test 1', function() {
 	// Not a bad test to run on collection methods.
+		ok(true, "arrange node");
+
 	var lc = new LoadCommand();
 	lc.load();
 	var models = [];
 	var nodes = [];
 	//console.log(lc.load);
-	setTimeout(function() {
-		//start();
-	}, 100);
 	lc.completeSignal.on("complete", function(obj) {
 		start();
 		(function(data) {
@@ -46,7 +45,6 @@ test('test 1', function() {
 		arrangeCommand.execute();
 		//equal(arrangeCommand._pow(3),1,"power");
 	});
-	ok(true, "arrange node");
 	equal(3+2,5,"threee");
 	//var n = nodes[2].getRepul(nodes[3],100);
 	ok(true,"get repul");

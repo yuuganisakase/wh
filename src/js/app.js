@@ -126,6 +126,7 @@ var NodeView = Backbone.View.extend({
 
         this.model.set("vx", 1);
         this.model.set("vy", 1);
+
         var kinds = that.getType();
 
 
@@ -169,41 +170,10 @@ var NodeView = Backbone.View.extend({
         var that = this;
 
         var current = this.getPosition();
-        // var goal = me.getPosition();
-        // var xDist = goal.x - current.x;
-        // var yDist = goal.y - current.y;
-        // var angle = Math.atan2(yDist, xDist);
-        // var dist = xDist * xDist + yDist*yDist;
-        // var repul = 10000 / dist;
-        // if(repul > 5){
-        //     repul = 5;
-        // }
-        // var inpul = 1;
-        // if(this.getType() == 1){
-        //     repul =  repul * 1;
-        // }else if(this.getType() == 2){
-        //     repul =  repul * 6;
-        // }
-        // var vel = this.model.get("vel") - repul + inpul;
-        // vel = vel*0.92;
-        // log("velocity");
-        // log(vel);
-        // if(me === this){
-        //     vel = 0;
-        // }
+
         var ar = [];
         _.each(nodes, function(n) {
             var otherType = n.getType();
-            // if (that.getType() == 1) {
-            //     if (otherType === 0) {
-            //         ar.push(that.getRepul(n, 20000));
-            //     }else if (otherType == 1) {
-            //         ar.push(that.getRepul(n, 1000));
-            //     }else if (otherType == 2) {
-
-            //     }
-
-            // }
 
             ar.push(that.getRepul(n));
         });
@@ -218,23 +188,23 @@ var NodeView = Backbone.View.extend({
         var vy = -ary + this.model.get("vy");
         vx = vx * 0.95;
         vy = vy * 0.95;
-        
 
 
         if (this.getType() === 0) {
             vx = 0;
             vy = 0;
         }
-        // if(vx > 5){
-        //     vx = 5;
-        // }else if(vx < -5){
-        //     vx = -5;
-        // }
-        // if(vy > 5){
-        //     vy = 5;
-        // }else if(vy < -5){
-        //     vy = -5;
-        // }
+        var max = 7;
+        if(vx > max){
+            vx = max;
+        }else if(vx < -max){
+            vx = -max;
+        }
+        if(vy > max){
+            vy = max;
+        }else if(vy < -max){
+            vy = -max;
+        }
 
         this.model.set("vx", vx);
         this.model.set("vy", vy);
@@ -267,11 +237,11 @@ var NodeView = Backbone.View.extend({
             }
         }else if(myType == 2){
             if(otherType === 0){
-                cof = 70000;
+                cof = 75000;
             }else if(otherType == 1){
                 cof = 100;
             }else{
-                cof = 1000;
+                cof = 2000;
             }
         }
         var that = this;
@@ -298,6 +268,9 @@ var NodeView = Backbone.View.extend({
         }
         
         if(((myType == 1 && otherType == 2) ||  (myType == 2 && otherType == 1)) && that.isLinked(this,n)){
+            ob.x = ob.x - 0.1 * Math.cos(angle);
+            ob.y = ob.y - 0.1 * Math.sin(angle);
+        }else if(myType == 2 && otherType == 2 && that.isLinked(this,n)){
             ob.x = ob.x - 0.1 * Math.cos(angle);
             ob.y = ob.y - 0.1 * Math.sin(angle);
         }
@@ -422,6 +395,12 @@ var NodeView = Backbone.View.extend({
     _position: {
         x: 100,
         y: 100
+    },
+    remove: function() {
+        var tween = new TWEEN.Tween();
+        tween.to({
+            opacity: 0
+        }, 500);
     },
     getFourCenter: function() {
         var that = this;
@@ -637,7 +616,7 @@ var LoadCommand = function() {
 					log("load command");
 
 					$.ajax({
-						url: "debug/nodeList.json",
+						url: "debug/nodeList1.json",
 						cache: false
 					}).done(function(data) {
 						log("node list json");
@@ -942,7 +921,6 @@ var DrawLinkCommand = function() {
 					ctx.lineWidth = 2;
 					ctx.beginPath();
 
-
 					var angle = Math.atan2(mmm2.y - mmm.y, mmm2.x - mmm.x);
 					var dx = 2 * Math.cos(angle);
 					var dy = 2 * Math.sin(angle);
@@ -954,7 +932,6 @@ var DrawLinkCommand = function() {
 						y: mmm.y + dy
 					};
 					for (i = num - 1; i >= 0; i--) {
-
 						ctx.moveTo(next.x, next.y);
 						ctx.lineTo(next.x + dx, next.y + dy);
 						next.x += dx * 2;
@@ -1517,6 +1494,28 @@ var FindNonFriendFromArrayCommand = function() {
 			}
 		};
 	};
+//ReloadDataCommand.js
+var ReloadDataCommand = function(_nodes) {
+		var count = 2;
+		return {
+			completeSignal: _.extend({}, Backbone.Events),
+			load: function() {
+				var that = this;
+				$.ajax({
+					url: "debug/nodeList" + count + ".json",
+					cache: false
+				}).done(function(data) {
+					log("node list json");
+					count += 1;
+					if(count == 6){
+						count = 1;
+					}
+					that.completeSignal.trigger("complete", data);
+				});
+
+			}
+		};
+	};
 var FBproxy = function(_store) {
 	var store = _store;
 
@@ -1547,15 +1546,15 @@ var store = {};
 var FBp = new FBproxy(store);
 
 var allInit = function() {
-log("all init");
+        log("all init");
         var models = [];
         var nodes = [];
-                var images = ['assets/help.png','assets/help_hover.png',
-                            'assets/logo.png','assets/logo_hover.png',
-                            'assets/logout.png','assets/logout_hover.png',
-                            "assets/clock.png"];
+        var images = ['assets/help.png', 'assets/help_hover.png', 'assets/logo.png', 'assets/logo_hover.png', 'assets/logout.png', 'assets/logout_hover.png', "assets/clock.png"];
+
+        var reloadCommand = new ReloadDataCommand();
         //window.fbAsyncInit = function() {
-        (function(){
+
+        (function() {
             var lc = new LoadCommand();
             lc.load();
             lc.completeSignal.on("complete", function(obj) {
@@ -1565,7 +1564,7 @@ log("all init");
                 (function(data) {
 
                     var createM = function(n) {
-                        
+
                             var m = new NodeModel(n, {
                                 "store": store
                             });
@@ -1576,23 +1575,23 @@ log("all init");
                     var ran = Math.random();
 
                     var randomChoose = function(ind) {
-                      if(Math.random() > 1){
-                        js.list.splice(ind,1);
-                        }
-                    };
+                            if (Math.random() > 1) {
+                                js.list.splice(ind, 1);
+                            }
+                        };
                     randomChoose(1);
                     randomChoose(6);
                     randomChoose(7);
                     randomChoose(8);
                     randomChoose(12);
-                    
+
                     //js.list = _.shuffle(js.list);
                     //js.list = js.list.slice(0, 0 + Math.floor(Math.random() * (js.list.length - 0)));
                     log("sliced");
                     log(js.list);
                     _.each(js.list, function(o) {
                         images.push(o.imageUrl);
-                        
+
                         createM(o);
                     });
                 })(obj);
@@ -1602,7 +1601,7 @@ log("all init");
                 log(images);
                 start();
             });
-        })()
+        })();
 
 
         var start = function() {
@@ -1615,17 +1614,17 @@ log("all init");
                 var collidedNum = 0;
 
                 var game = new Game(CanvasSizeW, CanvasSizeH);
-                game.fps = 10;
+                game.fps = 18;
                 var ls = new Scene();
                 game.loadingScene = ls;
                 game.preload(images);
                 game.scale = 1;
 
-                
+
                 game.onload = function() {
                     var scene = new Scene();
                     game.replaceScene(scene);
-                    
+
                     var stageGroup = new Group();
                     scene.addChild(stageGroup);
                     var stageSprite = new Sprite(CanvasSizeW, CanvasSizeH);
@@ -1635,27 +1634,26 @@ log("all init");
 
                     var me;
                     _.each(nodes, function(n) {
-                        if(n.getType() == "me"){
+                        if (n.getType() == "me") {
                             me = n;
                         }
                     });
-                game.addEventListener('enterframe', function () {
-                    stage.clear();
-                    TWEEN.update();
-                    var dl = new DrawLinkCommand();
-                    dl.execute(nodes, stage);
-                    _.each(nodes, function(n) {
-                        n.update(me, nodes);
+                    game.addEventListener('enterframe', function() {
+                        stage.clear();
+                        TWEEN.update();
+                        var dl = new DrawLinkCommand();
+                        dl.execute(nodes, stage);
+                        _.each(nodes, function(n) {
+                            n.update(me, nodes);
+                        });
+
+                        if (collidedNum > 0) {
+                            $(stageSprite._element).css("cursor", "pointer");
+
+                        } else {
+                            $(stageSprite._element).css("cursor", "default");
+                        }
                     });
-
-
-                    if(collidedNum > 0){
-                        $(stageSprite._element).css("cursor", "pointer");
-
-                    }else{
-                        $(stageSprite._element).css("cursor", "default");
-                    }
-                });
 
                     _.each(models, function(m) {
                         var v = factory.create(NodeView, {
@@ -1670,30 +1668,96 @@ log("all init");
                     log(nodes);
                     var arrangeCommand = new ArrangeNodeCommand(nodes);
                     arrangeCommand.execute();
-                    var me;
                     _.each(nodes, function(n) {
                         n.init();
-                        if(n.getType() === 0){
+                        if (n.getType() === 0) {
                             me = n;
                         }
                     });
 
+                    reloadCommand.completeSignal.on("complete", function(data) {
+                            log("reload command");
+                            makeNodes(data);
+                            setTimeout(function() {reload();}, 9000);
+                        });
+
+                    var reload = function() {
+                        reloadCommand.load();
+                    };
+                    var makeNodes = function(data) {
+                        var tempModels = [];
+                        var createM = function(n) {
+                            var m = new NodeModel(n, {
+                                "store": store
+                            });
+                            tempModels.push(m);
+                        };
+
+                        var js = JSON.parse(data);
+
+                        _.each(js.list, function(o) {
+                            //images.push(o.imageUrl);
+
+                            createM(o);
+                        });
+
+
+                        var newM = [];
+                        log("****************reload make nodes");
+                        log("before");
+                        log(nodes);
+                        _.each(tempModels, function(t) {
+                            var result = _.find(nodes, function(n) {
+                                return (n.getId() == t.get("userId"));
+                            });
+                            //log(result);
+                            if(_.isUndefined(result)){
+                                var v = factory.create(NodeView, {
+                                    "model": t
+                                });
+                                log("new model");
+                                log(t);
+                                game.load(t.get("imageUrl"), function() {
+                                    v.setPosition((CanvasSizeW/2) + Math.random()*100 - 50,(CanvasSizeH/2) + Math.random()*100 - 50);
+
+                                    v.init();
+                                    nodes.push(v);
+                                });
+                            }
+                        });
+
+                        _.each(nodes, function(n) {
+                            var result = _.find(tempModels, function(t) {
+                                return (t.get("userId") == n.getId());
+                            });
+                            if(_.isUndefined(result)){
+                                n.remove();
+                                setTimeout(function() {nodes = _.without(nodes, n);}, 600);
+                            }
+                        });
+                        log("after");
+                        log(nodes);
+
+                    };
+                    setTimeout(function() {
+                        reload();
+                    }, 3000);
 
                     var dl = new DrawLinkCommand();
                     dl.execute(nodes, stage);
 
 
                     var eb = factory.getGlobalEventbus();
-                    eb.on("collided",function(e) {
+                    eb.on("collided", function(e) {
                         log("collided");
-                        
+
                         collidedNum += 1;
-                        
+
                     });
-                    stageSprite.addEventListener("touchend",function(e) {
+                    stageSprite.addEventListener("touchend", function(e) {
                         for (var i = nodes.length - 1; i >= 0; i--) {
                             var n = nodes[i];
-                            if( n.checkCollided(e.localX, e.localY) ){
+                            if (n.checkCollided(e.localX, e.localY)) {
                                 n.onClick();
                                 i = 0;
                             }
@@ -1716,28 +1780,27 @@ log("all init");
                         resizeTimer = setTimeout(onResize, 100);
                     });
                     var onResize = function() {
-                        $ = jQuery.noConflict();
-                        try{
-                            eb.trigger("resize");
-                            var wid = $(window).width();
-                            var hei = $(window).height();
-                            var se = $(scene._element);
+                            $ = jQuery.noConflict();
+                            try {
+                                eb.trigger("resize");
+                                var wid = $(window).width();
+                                var hei = $(window).height();
+                                var se = $(scene._element);
 
-                            se.addClass("current_scene");
-                            game.width = wid;
-                            se.width(wid);
-                            game.height = hei;
-                            se.height(hei);
+                                se.addClass("current_scene");
+                                game.width = wid;
+                                se.width(wid);
+                                game.height = hei;
+                                se.height(hei);
 
-                            stageGroup.x = (wid - CanvasSizeW)/2;
-                            stageGroup.y = ((hei - 64) - CanvasSizeH)/2 + 64;
-                            log(se);
-                        }catch(e){
-                            log("resize error");
-                        }
-                    };
+                                stageGroup.x = (wid - CanvasSizeW) / 2;
+                                stageGroup.y = ((hei - 64) - CanvasSizeH) / 2 + 64;
+                                log(se);
+                            } catch (e) {
+                                log("resize error");
+                            }
+                        };
                     onResize();
-
 
                 };
                 game.start();

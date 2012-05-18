@@ -25,6 +25,7 @@ module.exports = function(grunt) {
         'src/js/util/ArrangeNodeCommand.js',
         'src/js/util/GetGroupMembersCommand.js',
         'src/js/util/FindNonFriendFromArrayCommand.js',
+        'src/js/util/ReloadDataCommand.js',
         'src/js/util/FBproxy.js',
         'src/js/app2.js'
         ],

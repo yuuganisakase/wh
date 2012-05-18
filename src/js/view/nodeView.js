@@ -67,6 +67,7 @@ var NodeView = Backbone.View.extend({
 
         this.model.set("vx", 1);
         this.model.set("vy", 1);
+
         var kinds = that.getType();
 
 
@@ -110,41 +111,10 @@ var NodeView = Backbone.View.extend({
         var that = this;
 
         var current = this.getPosition();
-        // var goal = me.getPosition();
-        // var xDist = goal.x - current.x;
-        // var yDist = goal.y - current.y;
-        // var angle = Math.atan2(yDist, xDist);
-        // var dist = xDist * xDist + yDist*yDist;
-        // var repul = 10000 / dist;
-        // if(repul > 5){
-        //     repul = 5;
-        // }
-        // var inpul = 1;
-        // if(this.getType() == 1){
-        //     repul =  repul * 1;
-        // }else if(this.getType() == 2){
-        //     repul =  repul * 6;
-        // }
-        // var vel = this.model.get("vel") - repul + inpul;
-        // vel = vel*0.92;
-        // log("velocity");
-        // log(vel);
-        // if(me === this){
-        //     vel = 0;
-        // }
+
         var ar = [];
         _.each(nodes, function(n) {
             var otherType = n.getType();
-            // if (that.getType() == 1) {
-            //     if (otherType === 0) {
-            //         ar.push(that.getRepul(n, 20000));
-            //     }else if (otherType == 1) {
-            //         ar.push(that.getRepul(n, 1000));
-            //     }else if (otherType == 2) {
-
-            //     }
-
-            // }
 
             ar.push(that.getRepul(n));
         });
@@ -159,23 +129,23 @@ var NodeView = Backbone.View.extend({
         var vy = -ary + this.model.get("vy");
         vx = vx * 0.95;
         vy = vy * 0.95;
-        
 
 
         if (this.getType() === 0) {
             vx = 0;
             vy = 0;
         }
-        // if(vx > 5){
-        //     vx = 5;
-        // }else if(vx < -5){
-        //     vx = -5;
-        // }
-        // if(vy > 5){
-        //     vy = 5;
-        // }else if(vy < -5){
-        //     vy = -5;
-        // }
+        var max = 7;
+        if(vx > max){
+            vx = max;
+        }else if(vx < -max){
+            vx = -max;
+        }
+        if(vy > max){
+            vy = max;
+        }else if(vy < -max){
+            vy = -max;
+        }
 
         this.model.set("vx", vx);
         this.model.set("vy", vy);
@@ -208,11 +178,11 @@ var NodeView = Backbone.View.extend({
             }
         }else if(myType == 2){
             if(otherType === 0){
-                cof = 70000;
+                cof = 75000;
             }else if(otherType == 1){
                 cof = 100;
             }else{
-                cof = 1000;
+                cof = 2000;
             }
         }
         var that = this;
@@ -239,6 +209,9 @@ var NodeView = Backbone.View.extend({
         }
         
         if(((myType == 1 && otherType == 2) ||  (myType == 2 && otherType == 1)) && that.isLinked(this,n)){
+            ob.x = ob.x - 0.1 * Math.cos(angle);
+            ob.y = ob.y - 0.1 * Math.sin(angle);
+        }else if(myType == 2 && otherType == 2 && that.isLinked(this,n)){
             ob.x = ob.x - 0.1 * Math.cos(angle);
             ob.y = ob.y - 0.1 * Math.sin(angle);
         }
@@ -363,6 +336,12 @@ var NodeView = Backbone.View.extend({
     _position: {
         x: 100,
         y: 100
+    },
+    remove: function() {
+        var tween = new TWEEN.Tween();
+        tween.to({
+            opacity: 0
+        }, 500);
     },
     getFourCenter: function() {
         var that = this;

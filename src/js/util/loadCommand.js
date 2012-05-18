@@ -15,7 +15,7 @@ var LoadCommand = function() {
 					log("load command");
 
 					$.ajax({
-						url: "debug/nodeList.json",
+						url: "debug/nodeList1.json",
 						cache: false
 					}).done(function(data) {
 						log("node list json");

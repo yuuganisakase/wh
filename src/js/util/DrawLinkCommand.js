@@ -99,7 +99,6 @@ var DrawLinkCommand = function() {
 					ctx.lineWidth = 2;
 					ctx.beginPath();
 
-
 					var angle = Math.atan2(mmm2.y - mmm.y, mmm2.x - mmm.x);
 					var dx = 2 * Math.cos(angle);
 					var dy = 2 * Math.sin(angle);
@@ -111,7 +110,6 @@ var DrawLinkCommand = function() {
 						y: mmm.y + dy
 					};
 					for (i = num - 1; i >= 0; i--) {
-
 						ctx.moveTo(next.x, next.y);
 						ctx.lineTo(next.x + dx, next.y + dy);
 						next.x += dx * 2;
